@@ -5,13 +5,14 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: #f80000;
+    background-color: #272668;
     color: white;
     font-family: Arial, sans-serif;
   }
    
   h1 {
     margin-bottom: 20px;
+    color: #dfdc2d;
   }
    
   button {
@@ -31,7 +32,7 @@
   }
    
   button:hover:not(:disabled) {
-    background-color: #21a1f1;
+    background-color: #ffffff;
   }
    
   /* Grid Container */
@@ -96,9 +97,9 @@
   }
   
   .start-button {
-    background-color: #4CAF50; /* Green */
+    background-color: #e6e338; /* Green */
     border: none;
-    color: white;
+    color: rgb(17, 15, 15);
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
@@ -121,4 +122,60 @@
     font-size: 20px; 
   }
 
+  .photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #272668;
+    color: white;
+  }
+  
+  .party_logo {
+    width: 300px;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+  
+  .start-button {
+    background-color: #e6e338;
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .start-button:hover {
+    background-color: #3e8e41;
+  }
+  
+  .party-logo {
+    width: 800px; /* Set the desired width */
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 20px; /* Space below the logo */
+    border-radius: 10px; /* Optional rounded corners */
+    animation: bounce 2s infinite ease-in-out; /* Add animation */
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0); /* Original position */
+    }
+    25% {
+      transform: translateY(-20px); /* Move up */
+    }
+    50% {
+      transform: translateY(0); /* Back to original position */
+    }
+    75% {
+      transform: translateY(-20px); /* Move up again */
+    }
+  }
+  
   
