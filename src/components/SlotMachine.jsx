@@ -9,13 +9,12 @@ const WinnerAnnouncement = ({ winner, onNewDraw, showWinner, showCongratsMessage
   const [showDrawButton, setShowDrawButton] = useState(false);
 
   useEffect(() => {
-    // Start a timer to show the button after 7 seconds
     const timer = setTimeout(() => {
       setShowDrawButton(true);
     }, 7000);
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  }, []); // Empty dependency array ensures this runs only on initial render
+  }, []);
 
   return (
     <div className={`winner-announcement ${showWinner ? 'visible' : ''}`}>
@@ -25,7 +24,7 @@ const WinnerAnnouncement = ({ winner, onNewDraw, showWinner, showCongratsMessage
         </h2>
       )}
       <h3 className="winner-name">{`The winner is: ${winner.employee_name} (ID: ${winner.employee_id})`}</h3>
-      {showDrawButton && ( // Only render the button after 7 seconds
+      {showDrawButton && (
         <button className="new-draw-button" onClick={onNewDraw}>
           Start New Draw
         </button>
@@ -34,9 +33,8 @@ const WinnerAnnouncement = ({ winner, onNewDraw, showWinner, showCongratsMessage
   );
 };
 
-
 const SlotMachine = () => {
-  const [employees, setEmployees] = useState(employeesData);
+  const [employees, setEmployees] = useState([]);
   const [winnerIndex, setWinnerIndex] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(null);
@@ -52,14 +50,28 @@ const SlotMachine = () => {
   const intervalRef = useRef(null);
   const lastHighlightRef = useRef(null);
 
-  const songs = ['/song_one.MP3', '/song_two.MP3', '/song_three.MP3', '/pink soldier.MP3'];
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);  // Track the current song index
+  const songs = ['/LD4.MP3'];
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
 
   const initialSelectionInterval = 200;
   const finalSelectionInterval = 1000;
   const slowDownTime = 10000;
 
+  // Initial setup for employees in localStorage
   useEffect(() => {
+    const storedEmployees = localStorage.getItem('employees');
+    if (!storedEmployees) {
+      // Store the employees data if it's not already in localStorage
+      localStorage.setItem('employees', JSON.stringify(employeesData));
+      setEmployees(employeesData);
+    } else {
+      setEmployees(JSON.parse(storedEmployees));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (employees.length === 0) return;
+
     const audio = audioRef.current;
 
     if (isDrawing) {
@@ -67,19 +79,18 @@ const SlotMachine = () => {
       setShowConfetti(false);
 
       const handleAudioEnd = () => {
-        clearInterval(intervalRef.current); // Stop the random selection when audio ends
+        clearInterval(intervalRef.current);
         const finalWinnerIndex = lastHighlightRef.current;
         setWinnerIndex(finalWinnerIndex);
-        setWinner(employees[finalWinnerIndex]); // Lock the winner at the end
+        setWinner(employees[finalWinnerIndex]);
         setHighlightIndex(finalWinnerIndex);
         setIsDrawing(false);
         setShowConfetti(true);
         setWinners((prev) => [...prev, employees[finalWinnerIndex]]);
-        
-        // Show the Congratulations message after a delay
+
         setTimeout(() => {
-          setShowCongratsMessage(true); // Show the Congratulations message after a delay
-        }, 500); // Delay for smooth transition after song ends
+          setShowCongratsMessage(true);
+        }, 500);
       };
 
       audio.addEventListener('ended', handleAudioEnd);
@@ -114,42 +125,39 @@ const SlotMachine = () => {
         const randomIndex = Math.floor(Math.random() * employees.length);
         lastHighlightRef.current = randomIndex;
         setHighlightIndex(randomIndex);
-        setWinner(employees[randomIndex]); // Continuously update winner until song ends
+        setWinner(employees[randomIndex]);
 
         const interval = calculateSelectionInterval(remainingTime);
         clearInterval(intervalRef.current);
         intervalRef.current = setInterval(updateSelection, interval);
       };
 
-      // Show winner popup 5 seconds before the song ends
       setTimeout(() => {
-        setShowWinner(true); // Show the winner popup
+        setShowWinner(true);
         setScreenState('announcement');
-        setShatterAnimation(true); // Trigger shatter animation
-      }, songDuration - 5000); // 5 seconds before song ends
+        setShatterAnimation(true);
+      }, songDuration - 5000);
 
       intervalRef.current = setInterval(updateSelection, initialSelectionInterval);
 
       return () => {
         audio.removeEventListener('ended', handleAudioEnd);
-        clearInterval(intervalRef.current); // Clear the interval when component is unmounted
+        clearInterval(intervalRef.current);
       };
     } else {
       audio.pause();
       audio.currentTime = 0;
     }
-  }, [isDrawing, winners, slowDownTime, employees]);
+  }, [isDrawing, employees]);
 
-  // Handle looping the song list
   useEffect(() => {
     const audio = audioRef.current;
 
     const handleSongEnd = () => {
-      // Update to next song in the array, or back to the first one if it's the last song
       const nextSongIndex = (currentSongIndex + 1) % songs.length;
       setCurrentSongIndex(nextSongIndex);
-      audio.src = songs[nextSongIndex];  // Update the audio source to the next song
-      audio.play();  // Play the next song
+      audio.src = songs[nextSongIndex];
+      audio.play();
     };
 
     audio.addEventListener('ended', handleSongEnd);
@@ -157,13 +165,13 @@ const SlotMachine = () => {
     return () => {
       audio.removeEventListener('ended', handleSongEnd);
     };
-  }, [currentSongIndex, songs]);
+  }, [currentSongIndex]);
 
   const drawWinner = () => {
     setIsDrawing(true);
     setWinnerIndex(null);
     setHighlightIndex(null);
-    setShatterAnimation(false); // Reset shatter animation state
+    setShatterAnimation(false);
   };
 
   const handleDrawButtonClick = () => {
@@ -177,12 +185,16 @@ const SlotMachine = () => {
     setScreenState('start');
     setShowConfetti(true);
     setShowWinner(false);
-    setShowCongratsMessage(false); // Reset the Congratulations message
+    setShowCongratsMessage(false);
+
+    // Remove winner from localStorage
+    const updatedEmployees = employees.filter((employee) => employee.employee_id !== winner.employee_id);
+    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+    setEmployees(updatedEmployees);
   };
 
   return (
     <div className="app">
-
       {screenState === 'start' && (
         <>
           <Confetti />
@@ -203,9 +215,7 @@ const SlotMachine = () => {
               .map((employee, index) => (
                 <div
                   key={employee.employee_id}
-                  className={`box ${
-                    index === winnerIndex ? 'winner' : index === highlightIndex ? 'highlight' : ''
-                  }`}
+                  className={`box ${index === winnerIndex ? 'winner' : index === highlightIndex ? 'highlight' : ''}`}
                 >
                   {employee.employee_id}
                 </div>
@@ -219,7 +229,7 @@ const SlotMachine = () => {
           winner={winner}
           onNewDraw={handleNewDraw}
           showWinner={showWinner}
-          showCongratsMessage={showCongratsMessage} // Pass this state
+          showCongratsMessage={showCongratsMessage}
         />
       )}
 

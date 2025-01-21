@@ -5,7 +5,9 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #0f0e51;
+  background-image: url(../../public/game_wallpaper.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
   color: white;
   font-family: Arial, sans-serif;
 }
@@ -20,7 +22,7 @@ button {
   padding: 10px 20px;
   font-size: 18px;
   cursor: pointer;
-  color: #0a1a47;
+  color: #151381;
   background-color: #4fcddd;
   border: none;
   border-radius: 5px;
@@ -39,9 +41,9 @@ button:hover:not(:disabled) {
 /* Grid Container */
 .grid {
   display: grid;
-  grid-template-columns: repeat(20, 80px); /* 20 columns */
-  grid-template-rows: repeat(20, 30px); /* 20 rows */
-  gap: 5px;
+  grid-template-columns: repeat(10, 90px); /* 10 columns */
+  grid-template-rows: repeat(10, 40px); /* 10 rows */
+  gap: 8px;
   margin-top: 20px;
   justify-content: center;
 }
@@ -51,15 +53,18 @@ button:hover:not(:disabled) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 30px;
-  background-color: #e7dd7c;
-  color: rgb(2, 2, 2);
+  width: 60px; /* Adjust width for the diamond shape */
+  height: 60px; /* Make height equal to width for a square before rotation */
+  background-color: #e3b709;
+  color: rgb(91, 77, 77);
   font-size: 12px;
-  border-radius: 4px;
+  font-weight: bold;
   border: none;
-  transition: background-color 0.3s, transform 0.3s;
+  border-radius: 4px; /* Optional: rounded edges */
+  transform: rotate(45deg); /* Rotate to create a diamond shape */
+  transition: transform 0.3s, background-color 0.3s;
   user-select: none;
+  position: relative; /* For text alignment */
 }
  
 /* Highlight Animation */
@@ -129,7 +134,7 @@ button:hover:not(:disabled) {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #2f2e69;
+  background-color: #272579;
   color: white;
 }
  
